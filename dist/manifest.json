@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "Branch Name Generator",
+  "version": "1.1.8",
+  "description": "Generate Git branch name from task info",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "clipboardWrite",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://dev.azure.com/*",
+    "https://timepoint-vsts.visualstudio.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://dev.azure.com/*",
+        "https://timepoint-vsts.visualstudio.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
