@@ -50,9 +50,9 @@ Click Load unpacked
 
 Select the dist/ folder from this project
 
-Done! 🎉
+## Done! 🎉
 
-💡 Usage
+## 💡 Usage
 Open a task in Azure DevOps (e.g. a bug, feature, or epic)
 
 Click "Generate Branch Name"
@@ -80,17 +80,17 @@ Saves the result in localStorage
 
 Observes DOM changes so it works even on dynamic page loads
 
-🚀 Built With
+## 🚀 Built With
 Vite — fast modern frontend tooling
 
 Chrome Extensions API
 
 ✨ Vanilla JS and DOM APIs — no frameworks
 
-📈 Auto Versioning
+## 📈 Auto Versioning
 Each time you run npm run build, the version in manifest.json is incremented automatically by a prebuild script.
 
-🖤 Author
+## 🖤 Author
 Made with love for clean branches and less typing
 by Oleg Khai
 
