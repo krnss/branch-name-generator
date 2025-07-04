@@ -1,5 +1,5 @@
 import { extractTaskInfoFromDOM } from "./utils/dom-utils.js";
-import { createBranchName } from "./utils/format-utils.js";
+import { createBranchName, createDefaultCommitMessage } from "./utils/format-utils.js";
 import { storeBranchName } from "./utils/storage-utils.js";
 
 export function createIconButton(id, iconClass, ariaLabel, onClick) {
