@@ -5,6 +5,7 @@
   "scripts": {
     "prebuild": "node src/scripts/update-version.js",
     "build": "vite build",
+    "postbuild": "node src/scripts/copy-popup.js",
     "dev": "vite build --watch"
   },
   "devDependencies": {

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Branch Name Generator - Popup Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .test-button:hover {
+            background: #106ebe;
+        }
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .code {
+            background: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .popup-frame {
+            width: 400px;
+            height: 500px;
+            border: 2px solid #0078d4;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Branch Name Generator - Popup Test</h1>
+        
+        <div class="info-box">
+            <h3>New Features Added:</h3>
+            <ul>
+                <li><strong>Extension Popup:</strong> Click the extension icon in Chrome's toolbar to open settings</li>
+                <li><strong>On/Off Toggle:</strong> Enable or disable the branch name generator</li>
+                <li><strong>Configurable Structure:</strong> Customize the branch name format using variables</li>
+                <li><strong>Real-time Preview:</strong> See how your structure will look with example data</li>
+                <li><strong>Settings Persistence:</strong> All settings are saved to localStorage</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>Available Variables:</h3>
+            <ul>
+                <li><span class="code">${prefix}</span> - Task type prefix (feat, fix, task, etc.)</li>
+                <li><span class="code">${id}</span> - Task ID number</li>
+                <li><span class="code">${slug}</span> - URL-friendly version of task title</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>Default Structure:</h3>
+            <p><span class="code">${prefix}/TP-${id}-${slug}</span></p>
+            <p>Example output: <span class="code">feat/TP-1234-my-task-title</span></p>
+        </div>
+
+        <button class="test-button" onclick="openPopup()">Open Settings Popup</button>
+        <button class="test-button" onclick="testBranchGeneration()">Test Branch Generation</button>
+        <button class="test-button" onclick="clearSettings()">Clear Settings</button>
+        
+        <div id="output" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 6px; display: none;">
+            <h4>Output:</h4>
+            <pre id="output-content"></pre>
+        </div>
+
+        <h3>Popup Preview (Simulated):</h3>
+        <iframe src="dist/popup.html" class="popup-frame" title="Settings Popup"></iframe>
+    </div>
+
+    <script type="module">
+        // Make it globally available for testing
+        window.openPopup = () => {
+            // In a real extension, this would open the popup
+            // For testing, we'll just show the iframe
+            const iframe = document.querySelector('.popup-frame');
+            iframe.style.display = 'block';
+            showOutput('Popup opened! (In real extension, this opens when you click the extension icon)');
+        };
+        
+        window.testBranchGeneration = async () => {
+            try {
+                // Test settings retrieval
+                const stored = localStorage.getItem('branchNameGeneratorSettings');
+                let settings = { 
+                    enabled: true, 
+                    branchNameStructure: '${prefix}/TP-${id}-${slug}' 
+                };
+                
+                if (stored) {
+                    settings = { ...settings, ...JSON.parse(stored) };
+                }
+                
+                const structure = settings.branchNameStructure;
+                
+                const branchName = structure
+                    .replace(/\$\{prefix\}/g, 'feat')
+                    .replace(/\$\{id\}/g, '1234')
+                    .replace(/\$\{slug\}/g, 'implement-new-user-authentication');
+                
+                showOutput(`Settings: ${JSON.stringify(settings, null, 2)}
+Generated branch name: ${branchName}`);
+            } catch (error) {
+                showOutput(`Error: ${error.message}`);
+            }
+        };
+        
+        window.clearSettings = () => {
+            localStorage.removeItem('branchNameGeneratorSettings');
+            showOutput('Settings cleared!');
+        };
+        
+        function showOutput(message) {
+            const output = document.getElementById('output');
+            const content = document.getElementById('output-content');
+            content.textContent = message;
+            output.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

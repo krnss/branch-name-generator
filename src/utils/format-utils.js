@@ -17,10 +17,17 @@ export function kebabCase(str) {
     .replace(/(^-|-$)/g, "");
 }
 
+import { getBranchNameStructure } from './settings-utils.js';
+
 export function createBranchName({ type, id, title }) {
   const prefix = getBranchPrefix(type);
   const slug = kebabCase(title);
-  return `${prefix}/TP-${id}-${slug}`;
+  
+  const structure = getBranchNameStructure();
+  return structure
+    .replace(/\$\{prefix\}/g, prefix)
+    .replace(/\$\{id\}/g, id)
+    .replace(/\$\{slug\}/g, slug);
 }
 
 export function createDefaultCommitMessage({ type, id, title }) {

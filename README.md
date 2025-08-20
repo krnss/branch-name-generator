@@ -16,7 +16,12 @@ No more manual typing — one click gives you a clean, readable branch name and 
   
   Implements: #1234
   `
-
+- ⚙️ **NEW: Extension Settings Popup**
+  - Click the extension icon in Chrome's toolbar to open settings
+  - On/Off toggle to enable/disable the generator
+  - Customizable branch name structure using variables
+  - Real-time preview of your custom format
+  - Settings saved automatically to localStorage
 - 📋 Copy buttons with auto-feedback
 - 💾 Remembers last generated branch name using `localStorage`
 - ♻️ Regenerate and update at any time
@@ -66,6 +71,15 @@ Click "Generate Branch Name"
   fix: broken button styles
 
   Fixes: #2231
+
+⚙️ **Access Settings**
+- Click the extension icon (🧩) in Chrome's toolbar to open the settings popup
+- Toggle the generator on/off
+- Customize your branch name structure using variables:
+  - `${prefix}` - Task type (feat, fix, task, etc.)
+  - `${id}` - Task ID number
+  - `${slug}` - URL-friendly task title
+- See real-time preview of your custom format
 
 🧠 How It Works
 The extension:
