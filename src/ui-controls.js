@@ -62,6 +62,28 @@ export function createCommitCopyButton(info) {
   return btn;
 }
 
+function createPullRequestButton(info) {
+  const btn = document.createElement("button");
+  btn.id = "pull-request-button";
+  btn.className = "bolt-button bolt-default-button bolt-focus-treatment";
+  btn.style.cssText = "margin-left: 10px; padding: 0px 6px; font-size: 12px;";
+  btn.innerText = "Create PR";
+
+  btn.onclick = () => {
+    //navigate to pull request creation page with prefilled info
+    // https://timepoint-vsts.visualstudio.com/eTimePlus/_git/timepoint-etimeplus/pullrequestcreate?sourceRef=feat/TP-9470-system-notifications-update&targetRef=develop
+    // sourceRef is branch name
+    // targetRef is usually develop or main
+    const branchName = loadBranchName(info.id)?.branch || "";
+    const targetRef = "develop";
+    const prUrl = `https://timepoint-vsts.visualstudio.com/eTimePlus/_git/timepoint-etimeplus/pullrequestcreate?sourceRef=${encodeURIComponent(branchName)}&targetRef=${encodeURIComponent(targetRef)}`;
+    window.open(prUrl, "_blank");
+    
+  };
+
+  return btn;
+}
+
 export function relativeTimeFromDate(dateString) {
   const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
   const now = new Date();
@@ -103,6 +125,8 @@ export function injectMain(branchName, id, savedAt) {
   const container = renderInlineControls(branchName, id, savedAt);
   const commitCopyBtn = createCommitCopyButton(info);
   container.appendChild(commitCopyBtn);
+  const pullRequestBth  = createPullRequestButton(info);
+  container.appendChild(pullRequestBth);
 
   linkEl.parentElement.appendChild(container);
 }
