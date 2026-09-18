@@ -1,6 +1,10 @@
-const DEFAULT_SETTINGS = {
+export const DEFAULT_SETTINGS = {
   enabled: true,
-  branchNameStructure: '${prefix}/TP-${id}-${slug}'
+  branchNameStructure: '${prefix}/TP-${id}-${slug}',
+  repositories: [
+    { name: 'timepoint-etimeplus', targetRef: 'develop' }
+  ],
+  lastUsedRepo: 'timepoint-etimeplus'
 };
 
 const SETTINGS_KEY = 'branchNameGeneratorSettings';

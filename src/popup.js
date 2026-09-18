@@ -1,4 +1,4 @@
-import { getSettings, updateSetting, saveSettings } from './utils/settings-utils.js';
+import { DEFAULT_SETTINGS, getSettings, updateSetting, saveSettings } from './utils/settings-utils.js';
 
 class SettingsPopup {
   constructor() {
@@ -18,6 +18,10 @@ class SettingsPopup {
     this.enableToggle = document.getElementById('enableToggle');
     this.structureInput = document.getElementById('structureInput');
     this.previewText = document.getElementById('previewText');
+    this.repoNameInput = document.getElementById('repoNameInput');
+    this.repoTargetInput = document.getElementById('repoTargetInput');
+    this.addRepoBtn = document.getElementById('addRepoBtn');
+    this.repoList = document.getElementById('repoList');
     this.resetBtn = document.getElementById('resetBtn');
     this.saveBtn = document.getElementById('saveBtn');
     this.status = document.getElementById('status');
@@ -33,6 +37,7 @@ class SettingsPopup {
 
     // Set structure input
     this.structureInput.value = this.settings.branchNameStructure;
+    this.renderRepositories();
   }
 
   bindEvents() {
@@ -54,6 +59,25 @@ class SettingsPopup {
       await this.updateSetting('branchNameStructure', e.target.value);
     });
 
+    this.addRepoBtn.addEventListener('click', async () => {
+      await this.addRepository();
+    });
+
+    const addOnEnter = async (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        await this.addRepository();
+      }
+    };
+    this.repoNameInput.addEventListener('keydown', addOnEnter);
+    this.repoTargetInput.addEventListener('keydown', addOnEnter);
+
+    this.repoList.addEventListener('click', async (e) => {
+      const removeBtn = e.target.closest('[data-remove-repo]');
+      if (!removeBtn) return;
+      await this.removeRepository(removeBtn.dataset.removeRepo);
+    });
+
     // Reset button
     this.resetBtn.addEventListener('click', async () => {
       await this.resetToDefault();
@@ -63,6 +87,84 @@ class SettingsPopup {
     this.saveBtn.addEventListener('click', async () => {
       await this.saveAllSettings();
     });
+  }
+
+  renderRepositories() {
+    const repos = this.settings.repositories || [];
+    this.repoList.innerHTML = '';
+
+    if (!repos.length) {
+      const empty = document.createElement('li');
+      empty.className = 'repo-empty';
+      empty.textContent = 'No repositories yet. Add one to enable Create PR.';
+      this.repoList.appendChild(empty);
+      return;
+    }
+
+    for (const repo of repos) {
+      const item = document.createElement('li');
+      item.className = 'repo-item';
+
+      const details = document.createElement('div');
+      const name = document.createElement('div');
+      name.className = 'repo-item-name';
+      name.textContent = repo.name;
+      const target = document.createElement('div');
+      target.className = 'repo-item-target';
+      target.textContent = `target: ${repo.targetRef || 'develop'}`;
+      details.appendChild(name);
+      details.appendChild(target);
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'repo-remove';
+      removeBtn.dataset.removeRepo = repo.name;
+      removeBtn.textContent = 'Remove';
+
+      item.appendChild(details);
+      item.appendChild(removeBtn);
+      this.repoList.appendChild(item);
+    }
+  }
+
+  async addRepository() {
+    const name = this.repoNameInput.value.trim();
+    const targetRef = this.repoTargetInput.value.trim() || 'develop';
+
+    if (!name) {
+      this.showStatus('Repository name is required.', 'error');
+      return;
+    }
+
+    const repos = this.settings.repositories || [];
+    if (repos.some((repo) => repo.name.toLowerCase() === name.toLowerCase())) {
+      this.showStatus('That repository is already added.', 'error');
+      return;
+    }
+
+    const next = [...repos, { name, targetRef }];
+    this.settings.repositories = next;
+    if (!this.settings.lastUsedRepo) {
+      this.settings.lastUsedRepo = name;
+    }
+
+    await saveSettings(this.settings);
+    this.repoNameInput.value = '';
+    this.repoTargetInput.value = '';
+    this.renderRepositories();
+    this.showStatus('Repository added.', 'success');
+  }
+
+  async removeRepository(name) {
+    const next = (this.settings.repositories || []).filter((repo) => repo.name !== name);
+    this.settings.repositories = next;
+    if (this.settings.lastUsedRepo === name) {
+      this.settings.lastUsedRepo = next[0]?.name || '';
+    }
+
+    await saveSettings(this.settings);
+    this.renderRepositories();
+    this.showStatus('Repository removed.', 'success');
   }
 
   updatePreview() {
@@ -82,8 +184,8 @@ class SettingsPopup {
 
   async resetToDefault() {
     this.settings = {
-      enabled: true,
-      branchNameStructure: '${prefix}/TP-${id}-${slug}'
+      ...DEFAULT_SETTINGS,
+      repositories: DEFAULT_SETTINGS.repositories.map((repo) => ({ ...repo }))
     };
 
     this.loadSettings();
